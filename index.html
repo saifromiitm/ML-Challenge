@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <nav class="bg-blue-600 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-white text-2xl font-semibold">AI-ML Challenge</a>
+            <div>
+                <a href="#" class="text-white mr-4">Home</a>
+                <a href="#" class="text-white mr-4">About</a>
+                <a href="#" class="text-white">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container mx-auto mt-10 p-4">
+        <div class="bg-white p-8 rounded shadow-md">
+            <h2 class="text-3xl font-semibold mb-6">Predict Text Origin</h2>
+            <form id="prediction-form" class="space-y-4">
+                <div>
+                    <label for="text-input" class="block text-sm font-medium text-gray-700">Enter your text:</label>
+                    <textarea id="text-input" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="button" id="logistic-regression-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Predict with Logistic Regression</button>
+                    <button type="button" id="naive-bayes-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Predict with Naive Bayes</button>
+                    <button type="button" id="decision-tree-btn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Predict with Decision Tree</button>
+                </div>
+            </form>
+            <div id="prediction-result" class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm"></div>
+        </div>
+    </div>
+
+    <footer class="bg-blue-600 p-4 mt-10">
+        <div class="container mx-auto text-center text-white">
+            &copy; 2024 AI-ML Challenge. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('logistic-regression-btn').addEventListener('click', () => predict('logistic_regression'));
+        document.getElementById('naive-bayes-btn').addEventListener('click', () => predict('naive_bayes'));
+        document.getElementById('decision-tree-btn').addEventListener('click', () => predict('decision_tree'));
+
+        async function predict(model) {
+            const textInput = document.getElementById('text-input').value;
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: textInput, model: model })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('prediction-result').innerText = `Prediction: ${result.prediction}`;
+            } else {
+                const error = await response.json();
+                document.getElementById('prediction-result').innerText = `Error: ${error.error}`;
+            }
+        }
+    </script>
+</body>
+</html>
